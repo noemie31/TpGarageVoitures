@@ -29,7 +29,11 @@ public class Voiture {
 	 */
 	public void entreAuGarage(Garage g) throws Exception {
 		// Et si la voiture est déjà dans un garage ?
-
+		if (myStationnements.size()>0){
+			if(myStationnements.get(myStationnements.size()-1).estEnCours()){
+				throw new Exception("La voiture est en cours de stationnement");
+			}
+		}
 		Stationnement s = new Stationnement(this, g);
 		myStationnements.add(s);
 	}
@@ -41,8 +45,11 @@ public class Voiture {
 	 * @throws java.lang.Exception si la voiture n'est pas dans un garage
 	 */
 	public void sortDuGarage() throws Exception {
-		throw new UnsupportedOperationException("Pas encore implémenté");
-		// TODO: Implémenter cette méthode
+		if(myStationnements.size()==0)throw new Exception("voiture non stationnée");
+		if(!(myStationnements.get(myStationnements.size()-1).estEnCours())){
+			throw new Exception("La voiture ne se stationne pas");
+		}
+		myStationnements.get(myStationnements.size()-1).terminer();
 		// Trouver le dernier stationnement de la voiture
 		// Terminer ce stationnement
 	}
@@ -51,16 +58,23 @@ public class Voiture {
 	 * @return l'ensemble des garages visités par cette voiture
 	 */
 	public Set<Garage> garagesVisites() {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		Set<Garage> setgarage = new HashSet<Garage>();
+		for (int i=0;i<myStationnements.size();i++){
+			setgarage.add(myStationnements.get(i).getGarage());
+		}
+		return setgarage;
 	}
 
 	/**
 	 * @return vrai si la voiture est dans un garage, faux sinon
 	 */
 	public boolean estDansUnGarage() {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		if (myStationnements.size()==0) return false;
+		if(myStationnements.get(myStationnements.size()-1).estEnCours()){
+			return true;
+		}else{
+			return false;
+		}
 		// Vrai si le dernier stationnement est en cours
 	}
 
@@ -69,7 +83,7 @@ public class Voiture {
 	 * dates d'entrée / sortie dans ce garage
 	 * <br>
 	 * Exemple :
-	 * 
+	 *
 	 * <pre>
 	 * Garage Castres:
 	 *		Stationnement{ entree=28/01/2019, sortie=28/01/2019 }
@@ -81,8 +95,20 @@ public class Voiture {
 	 * @param out l'endroit où imprimer (ex: System.out)
 	 */
 	public void imprimeStationnements(PrintStream out) {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		Set<Garage> garagevisite = garagesVisites();
+		Iterator<Garage> iterateur =  garagevisite.iterator();
+		out.println("début");
+		for (Garage g : garagevisite){
+			out.println(iterateur.next().toString());
+			if(myStationnements.size()>0){
+				for (Stationnement s : myStationnements){
+					if(g==s.getGarage()){
+						out.println(s.toString());
+					}
+				}
+			}
+		}
+		out.println("fin");
 	}
 
 }
